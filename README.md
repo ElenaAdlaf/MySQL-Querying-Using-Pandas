@@ -1,6 +1,4 @@
 # MySQL-Querying-Using-Pandas
-Author: Elena Adlaf
-Version 1.1, 10/12/17
 This Python file shows how to query results from table, 't', in database, 'af', stored on a local MySQL server while
 importing the values directly into a Pandas dataframe.
 

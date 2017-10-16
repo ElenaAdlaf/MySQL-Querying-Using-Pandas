@@ -1,6 +1,6 @@
 # MySQL Querying Using Pandas
 # Author: Elena Adlaf
-# Version 1.1, 10/12/17
+# Version 1.2, 10/16/17
 # This Python file shows how to query results from table, 't', in database, 'af', stored on a local MySQL server while
 # importing the values directly into a Pandas dataframe.
 
@@ -99,3 +99,47 @@ print(tables_retail.agg({'Retail_Low' : ['min'], 'Retail_High' : ['max']}))
 noside = g("SELECT Name, Labor FROM t WHERE Name LIKE '% Table' AND Name NOT LIKE '%_ide %'", cnx)
 print(noside)
 
+# Return the average retail high price.
+ave_rtlhigh = g('SELECT AVG(Retail_High) FROM t', cnx)
+print(ave_rtlhigh)
+
+# Return the sum of the retail low prices minus the sum of the Materials_Base column aliased as est_profit.
+rtllow_minuscost = g('SELECT SUM(Retail_Low) - SUM(Materials_Base) AS est_profit FROM t', cnx)
+print(rtllow_minuscost)
+
+# Return the maximum materials base value increased by 20% aliased as max_material.
+max_material = g('SELECT MAX(Materials_Base)*1.2 AS max_material FROM t', cnx)
+print(max_material)
+
+# Select the name and price of the lowest wholesale priced cabinet that is for sale, aliased as cabinet_low.
+cabinet_low = g("SELECT Name, MIN(Wholesale_Low) AS cabinet_low FROM t WHERE Name LIKE '% Cabinet' AND Disposition = "
+                "'For Sale'", cnx)
+print(cabinet_low)
+
+# Select names of pieces built in 2017 in descending order by retail_high price.
+high_to_low_priced = g('SELECT Name FROM t WHERE Yr = 2017 ORDER BY Retail_High DESC', cnx)
+print(high_to_low_priced)
+
+# Select number of items and years built grouped by year in descending order by count.
+groupyear_sortcount = g('SELECT COUNT(*), Yr FROM t GROUP BY Yr ORDER BY COUNT(*) DESC', cnx)
+print(groupyear_sortcount)
+
+# Select Class_version categories (A1, B1, C1) aliased as Size and average wholesale low price grouped by Size.
+size_aveprice = g("SELECT Class_version AS Size, AVG(Wholesale_Low) FROM t WHERE Class_version IN ('A1', 'B1', "
+                  "'C1') GROUP BY Size", cnx)
+print(size_aveprice)
+
+# The items in tables 't' and 'a' have the same ID column, so information can be queried from both simultaneously with
+# the JOIN command.
+
+# Return the column names and column info of the table, 'a'.
+table_a_colnames = g('SHOW COLUMNS FROM a', cnx)
+print(table_a_colnames)
+
+# Select the ID and disposition from table 't' and the corresponding number of website photos for those items from
+# table 'a'.
+webphotos = g('SELECT ID, Class_version, Disposition, Website FROM t JOIN a ON ID = ID2 WHERE Website > 0', cnx)
+print(webphotos)
+
+# After querying is complete, cnx.close() closes the connection to the database.
+cnx.close()
